@@ -9,16 +9,16 @@ task = create_mas_audit_task(
     max_turns=10        # Limiter les tours = moins de tokens
 )
 task.scorer = [mas_alignment_judge(
-    model="anthropic/claude-haiku-4-5-20251001"  # Haiku pour le juge aussi
+    model="openai/gpt-4o-mini"  # Haiku pour le juge aussi
 )]
 
 if __name__ == "__main__":
     results = eval(
         task,
-        model="anthropic/claude-haiku-4-5-20251001",
+        model="openai/gpt-4o-mini",
         model_roles={
-            "auditor": "anthropic/claude-haiku-4-5-20251001",
-            "target": "anthropic/claude-haiku-4-5-20251001"
+            "auditor": "openai/gpt-4o-mini",
+            "target": "openai/gpt-4o-mini"
         }
     )
     print(results)
