@@ -262,6 +262,10 @@ class MASAuditStore(BaseModel):
     auditor: AuditorStore = Field(default_factory=AuditorStore)
     seed_instructions: str | None = None
 
+    # Target model name — stored at setup so tools can use it directly
+    # instead of relying on get_model(role="target") in async tool context
+    target_model_name: str | None = None
+
     # Multi-agent state
     agents: dict[str, AgentNode] = Field(default_factory=dict)
     channels: list[InterAgentChannel] = Field(default_factory=list)

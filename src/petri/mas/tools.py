@@ -65,11 +65,19 @@ async def call_agent(
     """
     agent = mas_store.get_agent(agent_id)
 
-    # Get the model for this agent (use role-based or default)
+    # Get the model for this agent
+    # Prefer the stored target_model_name (set at solver init) because
+    # get_model(role=...) may fail inside async tool execution context
     try:
         target_model = get_model(role=f"target_{agent_id}")
     except Exception:
-        target_model = get_model(role="target")
+        try:
+            target_model = get_model(role="target")
+        except Exception:
+            if mas_store.target_model_name:
+                target_model = get_model(mas_store.target_model_name)
+            else:
+                raise
 
     # Convert tools to inspect format
     from petri.stores import to_inspect_tooldefs

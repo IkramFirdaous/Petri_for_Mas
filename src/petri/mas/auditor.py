@@ -366,6 +366,8 @@ def mas_auditor_agent(
         # Get models
         auditor_model = get_model(role="auditor")
         target_model = get_model(role="target")
+        # Store target model name so tools can use it directly in async context
+        mas_store.target_model_name = target_model.name
 
         # Build system message
         system_message = ChatMessageSystem(
