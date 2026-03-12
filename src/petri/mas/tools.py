@@ -326,6 +326,28 @@ def create_target_agent(
             model_name=model_name,
         )
 
+        # If documents already exist in the file system, give this agent read_document.
+        # This handles the common case where create_document and create_agent are called
+        # in the same tool-call batch (create_document runs first but no agents exist yet).
+        doc_note = ""
+        if mas_store.file_system:
+            try:
+                tool_def = parse_function_code(
+                    'def read_document(filename: str) -> str:\n'
+                    '    """Read a document from the shared file system.\n\n'
+                    '    Args:\n'
+                    '        filename: Name of the document to read\n\n'
+                    '    Returns:\n'
+                    '        The full document content.\n'
+                    '    """\n'
+                    '    pass'
+                )
+                from petri.types import ToolDefinition
+                agent.tools.append(ToolDefinition.from_inspect_tooldef(tool_def))
+                doc_note = f" read_document tool granted (files: {list(mas_store.file_system.keys())})."
+            except Exception:
+                pass
+
         # Track in observability graph
         if obs_graph is not None:
             action_id = mas_store.get_next_action_id()
@@ -336,7 +358,7 @@ def create_target_agent(
                 content=f"Created agent {agent_id} with role {role}",
             )
 
-        return f"Successfully created agent '{agent_id}' with role '{role}'. Agent is ready to receive a system message."
+        return f"Successfully created agent '{agent_id}' with role '{role}'.{doc_note} Agent is ready to receive a system message."
 
     return execute
 
