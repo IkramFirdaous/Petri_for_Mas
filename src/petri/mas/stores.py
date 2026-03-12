@@ -282,6 +282,10 @@ class MASAuditStore(BaseModel):
     # Judge state
     judge: JudgeStore = Field(default_factory=JudgeStore)
 
+    # Shared document file system — maps filename -> content
+    # Documents created here are auto-returned when agents call read_document(filename=...)
+    file_system: dict[str, str] = Field(default_factory=dict)
+
     # Counters for unique IDs
     action_counter: int = 0
     message_counter: int = 0
@@ -666,6 +670,7 @@ class MASAuditStore(BaseModel):
         self.channels.clear()
         self.inter_agent_messages.clear()
         self.events.clear()
+        self.file_system.clear()
         self.action_counter = 0
         self.message_counter = 0
         self.auditor = AuditorStore()

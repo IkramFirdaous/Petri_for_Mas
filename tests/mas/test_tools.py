@@ -64,9 +64,10 @@ class TestDefaultMASAuditorTools:
 
         tools = default_mas_auditor_tools(store, obs_graph)
 
-        assert len(tools) == 12
+        assert len(tools) == 13
         tool_names = [get_tool_name(t) for t in tools]
 
+        assert "create_document" in tool_names
         assert "create_agent" in tool_names
         assert "set_agent_system_message" in tool_names
         assert "create_agent_tool" in tool_names
@@ -86,7 +87,7 @@ class TestDefaultMASAuditorTools:
 
         tools = default_mas_auditor_tools(store, obs_graph=None)
 
-        assert len(tools) == 12
+        assert len(tools) == 13
         # All tools should be callable
         assert all(callable(t) for t in tools)
 
